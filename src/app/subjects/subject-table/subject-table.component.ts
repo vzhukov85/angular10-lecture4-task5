@@ -1,5 +1,4 @@
 import { Component, ViewChild } from '@angular/core';
-import { Subject } from 'rxjs';
 import { SubjectItemComponent } from '../subject-item/subject-item.component';
 import { SubjectElement, SubjectService } from '../subject.service';
 
@@ -30,6 +29,7 @@ export class SubjectTableComponent {
   deleteItem(element: SubjectElement): void {
     this.subjectSrv.delete(element);
     this.reloadSubjects();
+    this.subjectElement.checkExist();
   }
 
   getRecord(element: SubjectElement): void {
@@ -37,7 +37,6 @@ export class SubjectTableComponent {
   }
 
   reloadSubjects(): void {
-    console.log('reload');
     this.subjects = this.subjectSrv.subjects;
   }
 }

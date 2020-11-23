@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, HostBinding, Input, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { DateAdapter } from '@angular/material/core';
 import { SubjectTableComponent } from '../subject-table/subject-table.component';
@@ -18,11 +18,15 @@ export class SubjectItemComponent implements OnInit {
 
   @Input() parent: SubjectTableComponent;
 
+  elementExist = false;
+  buttonText = '';
+
   constructor(
     private dateAdapter: DateAdapter<any>,
     private subjectSrv: SubjectService
   ) {
     this.dateAdapter.setLocale('ru');
+    this.updateButtonText();
   }
 
   addElement(): void {
@@ -36,6 +40,27 @@ export class SubjectItemComponent implements OnInit {
     console.log('add element', element);
     this.subjectSrv.addElement(element);
     this.parent.reloadSubjects();
+    this.elementExist = true;
+    this.updateButtonText();
+  }
+
+  checkExist(): void {
+    this.elementExist = false;
+    this.subjectSrv.subjects.forEach(item => {
+      if (item.position === this.position.value) {
+        this.elementExist = true;
+        return;
+      }
+    });
+    this.updateButtonText();
+  }
+
+  private updateButtonText(): void {
+    if (this.elementExist) {
+      this.buttonText = 'Изменить';
+    } else {
+      this.buttonText = 'Добавить';
+    }
   }
 
   selectElement(element: SubjectElement): void {
@@ -44,6 +69,8 @@ export class SubjectItemComponent implements OnInit {
     this.topic.setValue(element.topic);
     this.homework.setValue(element.homework);
     this.notice.setValue(element.notice);
+    this.elementExist = true;
+    this.updateButtonText();
   }
 
   clean(): void {
@@ -52,6 +79,8 @@ export class SubjectItemComponent implements OnInit {
     this.topic.setValue(null);
     this.homework.setValue(null);
     this.notice.setValue(null);
+    this.elementExist = false;
+    this.updateButtonText();
   }
 
   ngOnInit(): void {}

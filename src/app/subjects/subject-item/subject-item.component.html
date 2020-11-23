@@ -2,7 +2,7 @@
   <mat-grid-tile colspan="1" rowspan="1">
     <mat-form-field appearancece="fill">
       <mat-label>Номер</mat-label>
-      <input matInput type="number" maxlength="3" [formControl]="position" required min="1"/>
+      <input matInput type="number" maxlength="3" [formControl]="position" required min="1" (change)="checkExist()"/>
     </mat-form-field>
   </mat-grid-tile>
 
@@ -51,7 +51,7 @@
 </mat-grid-list>
 
 <div class="button-block">
-  <button mat-raised-button (click)="addElement()">Добавить</button>
+  <button mat-raised-button (click)="addElement()" [innerText]="buttonText"></button>
   <button mat-raised-button (click)="clean()">Очистить</button>
 </div>
 <mat-divider></mat-divider>
