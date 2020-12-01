@@ -12,6 +12,8 @@ import { SubjectTableComponent } from './subject-table/subject-table.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import {MatDividerModule} from '@angular/material/divider';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatCardModule} from '@angular/material/card';
 
 @NgModule({
   declarations: [SubjectTableComponent, SubjectItemComponent],
@@ -26,7 +28,9 @@ import {MatDividerModule} from '@angular/material/divider';
     MatGridListModule,
     MatButtonModule,
     MatIconModule,
-    MatDividerModule
+    MatDividerModule,
+    MatPaginatorModule,
+    MatCardModule
   ],
   exports: [SubjectTableComponent, SubjectItemComponent],
 })

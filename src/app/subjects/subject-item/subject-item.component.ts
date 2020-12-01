@@ -1,8 +1,8 @@
-import { Component, HostBinding, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { DateAdapter } from '@angular/material/core';
 import { SubjectTableComponent } from '../subject-table/subject-table.component';
-import { SubjectElement, SubjectService } from '../subject.service';
+import { SubjectElement, SubjectService } from '../../services/subject.service';
 
 @Component({
   selector: 'subject-item',

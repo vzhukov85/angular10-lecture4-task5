@@ -62,4 +62,5 @@ export class SubjectService {
     console.log(filteredSubjects);
     localStorage.setItem('subjects', JSON.stringify(filteredSubjects));
   }
+
 }

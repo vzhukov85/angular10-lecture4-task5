@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { SubjectItemComponent } from '../subject-item/subject-item.component';
-import { SubjectElement, SubjectService } from '../subject.service';
+import { SubjectElement, SubjectService } from '../../services/subject.service';
 
 @Component({
   selector: 'subject-table',
