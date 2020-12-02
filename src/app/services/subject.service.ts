@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { JournalDaoService } from './journal-dao.service';
 
 export interface SubjectElement {
   position: number;
@@ -8,21 +9,46 @@ export interface SubjectElement {
   notice: string;
 }
 
+export interface LessonDate {
+  date: Date;
+  count: number;
+}
+
+export interface JournalUpdate {
+  updateColumns(): void;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class SubjectService {
-  constructor() {
-    if (this.subjects === null) {
-      localStorage.setItem('subjects', JSON.stringify([]));
-    }
+  private journalCallback: JournalUpdate;
+  constructor(private journalDaoSrv: JournalDaoService) {
   }
 
   addElement(element: SubjectElement): void {
-    const subjects: SubjectElement[] = this.subjects;
+    const subjects: SubjectElement[] = this.journalDaoSrv.getAllSubjects();
     this.updateSubjects(subjects, element);
     this.sortSubjects(subjects);
-    localStorage.setItem('subjects', JSON.stringify(subjects));
+    const pos = this.findSubjIndex(subjects, element);
+    this.journalDaoSrv.addSubjectFromGrade(pos);
+    this.saveSubjects(subjects);
+  }
+
+  private findSubjIndex(subjects: SubjectElement[], element: SubjectElement): number {
+    return subjects.findIndex((item, index, array) => {
+      if (item.position === element.position) {
+       return true;
+      }
+      return false;
+    });
+  }
+
+  private saveSubjects(subjects: SubjectElement[]): void {
+    this.journalDaoSrv.saveSubjects(subjects);
+    if (this.journalCallback != null) {
+      this.journalCallback.updateColumns();
+    }
   }
 
   private sortSubjects(subjects: SubjectElement[]): void {
@@ -37,7 +63,10 @@ export class SubjectService {
     });
   }
 
-  private updateSubjects(subjects: SubjectElement[], element: SubjectElement): void {
+  private updateSubjects(
+    subjects: SubjectElement[],
+    element: SubjectElement
+  ): void {
     let isExist = false;
     subjects.forEach((item, index) => {
       if (item.position === element.position) {
@@ -50,17 +79,41 @@ export class SubjectService {
     }
   }
 
-  get subjects(): SubjectElement[] {
-    return JSON.parse(localStorage.getItem('subjects'));
+  setJournalCallback(journal: JournalUpdate): void {
+    this.journalCallback = journal;
   }
 
   delete(element: SubjectElement): void {
-    const subjects = JSON.parse(localStorage.getItem('subjects'));
+    const subjects = this.journalDaoSrv.getAllSubjects();
+    const pos = this.findSubjIndex(subjects, element);
     const filteredSubjects = subjects.filter((item) => {
       return item.position !== element.position;
     });
     console.log(filteredSubjects);
-    localStorage.setItem('subjects', JSON.stringify(filteredSubjects));
+    this.journalDaoSrv.deleteSubjectFromGrade(pos);
+    this.saveSubjects(filteredSubjects);
   }
 
+  get lessonDates(): Array<LessonDate> {
+    const dates: LessonDate[] = [];
+    this.journalDaoSrv.getAllSubjects().forEach((element) => {
+      if (
+        dates.length < 1 ||
+        dates[dates.length - 1].date.getTime() !== element.dateSubject.getTime()
+      ) {
+        const lessonDate: LessonDate = {
+          date: element.dateSubject,
+          count: 1
+        };
+        dates.push(lessonDate);
+      } else {
+        ++dates[dates.length - 1].count;
+      }
+    });
+    return dates;
+  }
+
+  get subjects(): SubjectElement[] {
+    return this.journalDaoSrv.getAllSubjects();
+  }
 }
